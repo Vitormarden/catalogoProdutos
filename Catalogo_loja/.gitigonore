@@ -1,0 +1,25 @@
+## Visual Studio temporary files
+[Bb]in/
+[Oo]bj/
+*.user
+*.userosscache
+*.sln.docstates
+
+## Visual Studio Code
+.vscode/
+.history/
+
+## .NET Core / .NET 10
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Databases (NÃO SUBIR O BANCO LOCAL)
+*.db
+*.db-shm
+*.db-wal
+
+## OS generated files
+.DS_Store
+Thumbs.db
+
