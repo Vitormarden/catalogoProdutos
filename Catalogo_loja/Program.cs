@@ -1,4 +1,5 @@
 ﻿using Catalogo_loja.Data; // Importa sua pasta Data
+using Catalogo_loja.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +27,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
+
 var app = builder.Build();
 
 // 5. Ativa o Swagger se estiver em ambiente de desenvolvimento
@@ -47,4 +50,3 @@ app.MapControllers();
 
 app.Run();
 
-builder.Services.AddScoped<IProdutoService, ProdutoService>();
