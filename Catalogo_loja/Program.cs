@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Catalogo_loja.Data; // Importa sua pasta Data
+﻿using Catalogo_loja.Data; // Importa sua pasta Data
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,3 +46,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
