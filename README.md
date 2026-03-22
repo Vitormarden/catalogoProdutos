@@ -2,8 +2,7 @@
 🛒 Catálogo de Produtos - Desafio Técnico Agilean
 
   Este projeto é uma aplicação Full Stack de Catálogo de Produtos desenvolvida como parte
-  do processo seletivo da Agilean. A solução contempla uma API RESTful robusta e uma
-  interface de usuário responsiva, moderna e focada em usabilidade.
+  do processo seletivo da Agilean. A solução contempla uma API RESTful robusta.
 
   🚀 Tecnologias Utilizadas
 
