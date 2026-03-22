@@ -1,4 +1,4 @@
-﻿using Catalogo_loja.Data; // Importa sua pasta Data
+using Catalogo_loja.Data; // Importa sua pasta Data
 using Catalogo_loja.Services;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation.AspNetCore;
@@ -33,6 +33,7 @@ builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
 var app = builder.Build();
@@ -55,4 +56,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-

@@ -1,19 +1,13 @@
 using Catalogo_loja.Models;
-using Catalogo_loja.DTOs;
 
-namespace Catalogo_loja.Services;
+namespace Catalogo_loja.Repositories;
 
-public interface IProdutoService
+public interface IProdutoRepository
 {
     Task<IEnumerable<Produto>> GetAllAsync(string? nome, string? categoria);
-
     Task<Produto?> GetByIdAsync(Guid id);
-
-    Task<Produto> CreateAsync(ProdutoDto dto);
-
-    Task<bool> UpdateAsync(Guid id, ProdutoDto dto);
-
+    Task<Produto> AddAsync(Produto produto);
+    Task<bool> UpdateAsync(Produto produto);
     Task<bool> DeleteAsync(Guid id);
-
     Task<IEnumerable<string>> GetCategoriasAsync();
 }

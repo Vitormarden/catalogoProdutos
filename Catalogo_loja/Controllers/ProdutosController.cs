@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Catalogo_loja.Models;
 using Catalogo_loja.DTOs;
 using Catalogo_loja.Services;

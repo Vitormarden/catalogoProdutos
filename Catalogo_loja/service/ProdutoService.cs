@@ -1,81 +1,45 @@
-﻿using Catalogo_loja.Data;
 using Catalogo_loja.Models;
 using Catalogo_loja.DTOs;
-using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using Catalogo_loja.Repositories;
 
 namespace Catalogo_loja.Services;
 
 public class ProdutoService : IProdutoService
 {
-    private readonly AppDbContext _context;
+    private readonly IProdutoRepository _repository;
     private readonly IMapper _mapper;
 
-    public ProdutoService(AppDbContext context, IMapper mapper)
+    public ProdutoService(IProdutoRepository repository, IMapper mapper)
     {
-        _context = context;
+        _repository = repository;
         _mapper = mapper;
     }
 
     public async Task<IEnumerable<Produto>> GetAllAsync(string? nome, string? categoria)
-    {
-        //  AsNoTracking para performance (leitura otimizada)
-        var query = _context.Produtos.AsNoTracking().AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(nome))
-        {
-            // ignora maiúsculas/minúsculas
-            query = query.Where(x => x.Nome.ToLower().Contains(nome.ToLower()));
-        }
-
-        if (!string.IsNullOrWhiteSpace(categoria))
-            query = query.Where(x => x.Categoria == categoria);
-
-        return await query.ToListAsync();
-    }
+        => await _repository.GetAllAsync(nome, categoria);
 
     public async Task<Produto?> GetByIdAsync(Guid id)
-        => await _context.Produtos.FindAsync(id);
+        => await _repository.GetByIdAsync(id);
 
     public async Task<Produto> CreateAsync(ProdutoDto dto)
     {
         var produto = _mapper.Map<Produto>(dto);
-        // O ID é gerado automaticamente no construtor da Model Produto
-
-        _context.Produtos.Add(produto);
-        await _context.SaveChangesAsync();
-        return produto;
+        return await _repository.AddAsync(produto);
     }
 
     public async Task<bool> UpdateAsync(Guid id, ProdutoDto dto)
     {
-        var produto = await _context.Produtos.FindAsync(id);
-
+        var produto = await _repository.GetByIdAsync(id);
         if (produto == null) return false;
 
         _mapper.Map(dto, produto);
-
-        _context.Produtos.Update(produto);
-
-        return await _context.SaveChangesAsync() > 0;
+        return await _repository.UpdateAsync(produto);
     }
 
     public async Task<bool> DeleteAsync(Guid id)
-    {
-        var produto = await _context.Produtos.FindAsync(id);
-
-        if (produto == null) return false;
-
-        _context.Produtos.Remove(produto);
-        return await _context.SaveChangesAsync() > 0;
-    }
+        => await _repository.DeleteAsync(id);
 
     public async Task<IEnumerable<string>> GetCategoriasAsync()
-    {
-        return await _context.Produtos
-            .AsNoTracking()
-            .Select(x => x.Categoria)
-            .Distinct()
-            .ToListAsync();
-    }
+        => await _repository.GetCategoriasAsync();
 }
