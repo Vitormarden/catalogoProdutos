@@ -16,7 +16,14 @@ public class ProdutosController : ControllerBase
         _service = service;
     }
 
-    // 1. GET: api/produtos (Lista com filtros de Nome, Categoria e Paginação)
+    /// <summary>
+    /// Lista os produtos com suporte a busca, filtros e paginação no servidor.
+    /// </summary>
+    /// <param name="nome">Filtro opcional por nome do produto.</param>
+    /// <param name="categoria">Filtro opcional por categoria.</param>
+    /// <param name="pageNumber">O número da página a ser retornada.</param>
+    /// <param name="pageSize">A quantidade de itens por página.</param>
+    /// <returns>Uma lista paginada de produtos ativos.</returns>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Produto>>> GetProdutos(
         [FromQuery] string? nome, 
@@ -32,7 +39,9 @@ public class ProdutosController : ControllerBase
         return Ok(produtos);
     }
 
-    // 2. GET: api/produtos/categorias (NOVO MÉTODO)
+    /// <summary>
+    /// Retorna a lista de todas as categorias únicas cadastradas.
+    /// </summary>
     [HttpGet("categorias")]
     public async Task<ActionResult<IEnumerable<string>>> GetCategorias()
     {
@@ -40,7 +49,10 @@ public class ProdutosController : ControllerBase
         return Ok(categorias);
     }
 
-    // 3. GET: api/produtos/{id}
+    /// <summary>
+    /// Obtém os detalhes de um produto específico pelo ID.
+    /// </summary>
+    /// <param name="id">O identificador único do produto (Guid).</param>
     [HttpGet("{id}")]
     public async Task<ActionResult<Produto>> GetProduto(Guid id)
     {
@@ -52,7 +64,10 @@ public class ProdutosController : ControllerBase
         return Ok(produto);
     }
 
-    // 4. POST: api/produtos
+    /// <summary>
+    /// Cria um novo produto no catálogo.
+    /// </summary>
+    /// <param name="dto">Dados do novo produto.</param>
     [HttpPost]
     public async Task<ActionResult<Produto>> PostProduto(ProdutoDto dto)
     {
@@ -62,7 +77,11 @@ public class ProdutosController : ControllerBase
         return CreatedAtAction(nameof(GetProduto), new { id = produtoCriado.Id }, produtoCriado);
     }
 
-    // 5. PUT: api/produtos/{id}
+    /// <summary>
+    /// Atualiza os dados de um produto existente.
+    /// </summary>
+    /// <param name="id">O ID do produto a ser atualizado.</param>
+    /// <param name="dto">Os novos dados do produto.</param>
     [HttpPut("{id}")]
     public async Task<IActionResult> PutProduto(Guid id, [FromBody] ProdutoDto dto)
     {
@@ -74,7 +93,10 @@ public class ProdutosController : ControllerBase
         return NoContent(); // Sucesso sem retorno de conteúdo (Padrão REST)
     }
 
-    // 6. DELETE: api/produtos/{id}
+    /// <summary>
+    /// Realiza a remoção lógica (Soft Delete) de um produto.
+    /// </summary>
+    /// <param name="id">O ID do produto a ser removido.</param>
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduto(Guid id)
     {
