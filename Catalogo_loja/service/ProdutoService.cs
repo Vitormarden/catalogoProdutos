@@ -16,8 +16,8 @@ public class ProdutoService : IProdutoService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<Produto>> GetAllAsync(string? nome, string? categoria)
-        => await _repository.GetAllAsync(nome, categoria);
+    public async Task<(IEnumerable<Produto> Items, PaginationMetadata Metadata)> GetAllAsync(string? nome, string? categoria, int pageNumber, int pageSize)
+        => await _repository.GetAllAsync(nome, categoria, pageNumber, pageSize);
 
     public async Task<Produto?> GetByIdAsync(Guid id)
         => await _repository.GetByIdAsync(id);
