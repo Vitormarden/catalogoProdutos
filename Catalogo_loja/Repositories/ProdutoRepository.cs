@@ -15,7 +15,7 @@ public class ProdutoRepository : IProdutoRepository
 
     public async Task<(IEnumerable<Produto> Items, PaginationMetadata Metadata)> GetAllAsync(string? nome, string? categoria, int pageNumber, int pageSize)
     {
-        var query = _context.Produtos.AsNoTracking().AsQueryable();
+        var query = _context.Produtos.AsNoTracking().Where(x => x.Ativo).AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(nome))
             query = query.Where(x => x.Nome.ToLower().Contains(nome.ToLower()));
@@ -35,7 +35,7 @@ public class ProdutoRepository : IProdutoRepository
     }
 
     public async Task<Produto?> GetByIdAsync(Guid id)
-        => await _context.Produtos.FindAsync(id);
+        => await _context.Produtos.FirstOrDefaultAsync(x => x.Id == id && x.Ativo);
 
     public async Task<Produto> AddAsync(Produto produto)
     {
@@ -55,7 +55,8 @@ public class ProdutoRepository : IProdutoRepository
         var produto = await _context.Produtos.FindAsync(id);
         if (produto == null) return false;
 
-        _context.Produtos.Remove(produto);
+        produto.Ativo = false; // Remoção Lógica (Soft Delete)
+        _context.Produtos.Update(produto);
         return await _context.SaveChangesAsync() > 0;
     }
 
