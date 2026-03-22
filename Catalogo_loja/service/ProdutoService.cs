@@ -2,16 +2,19 @@
 using Catalogo_loja.Models;
 using Catalogo_loja.DTOs;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace Catalogo_loja.Services;
 
 public class ProdutoService : IProdutoService
 {
     private readonly AppDbContext _context;
+    private readonly IMapper _mapper;
 
-    public ProdutoService(AppDbContext context)
+    public ProdutoService(AppDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
     public async Task<IEnumerable<Produto>> GetAllAsync(string? nome, string? categoria)
@@ -36,17 +39,8 @@ public class ProdutoService : IProdutoService
 
     public async Task<Produto> CreateAsync(ProdutoDto dto)
     {
-        var produto = new Produto
-        {
-            // O ID é gerado automaticamente no construtor da Model Produto
-            Nome = dto.Nome,
-            Descricao = dto.Descricao,
-            Preco = dto.Preco,
-            Estoque = dto.Estoque,
-            Categoria = dto.Categoria,
-            ImagemUrl = dto.ImagemUrl,
-            Ativo = dto.Ativo
-        };
+        var produto = _mapper.Map<Produto>(dto);
+        // O ID é gerado automaticamente no construtor da Model Produto
 
         _context.Produtos.Add(produto);
         await _context.SaveChangesAsync();
@@ -59,13 +53,7 @@ public class ProdutoService : IProdutoService
 
         if (produto == null) return false;
 
-        produto.Nome = dto.Nome;
-        produto.Descricao = dto.Descricao;
-        produto.Preco = dto.Preco;
-        produto.Estoque = dto.Estoque;
-        produto.Categoria = dto.Categoria;
-        produto.ImagemUrl = dto.ImagemUrl;
-        produto.Ativo = dto.Ativo;
+        _mapper.Map(dto, produto);
 
         _context.Produtos.Update(produto);
 

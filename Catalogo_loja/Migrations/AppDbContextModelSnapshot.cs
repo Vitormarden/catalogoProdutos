@@ -52,6 +52,7 @@ namespace Catalogo_loja.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("TEXT");
 
+
                     b.HasKey("Id");
 
                     b.ToTable("Produtos");
