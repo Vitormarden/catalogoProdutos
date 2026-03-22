@@ -1,7 +1,9 @@
 using Catalogo_loja.Data; // Importa sua pasta Data
 using Catalogo_loja.Services;
+using Catalogo_loja.Repositories;
 using Microsoft.EntityFrameworkCore;
 using FluentValidation.AspNetCore;
+using FluentValidation;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,9 +24,10 @@ builder.Services.AddCors(options =>
     });
 });
 
-// 3. Adiciona suporte aos Controllers e FluentValidation
-builder.Services.AddControllers()
-    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly()));
+// 3. Adiciona suporte aos Controllers e FluentValidation (Nova Sintaxe)
+builder.Services.AddControllers();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
 // 4. Configura o AutoMapper
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -37,6 +40,9 @@ builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
 var app = builder.Build();
+
+// Middleware de Exceção Global deve ser um dos primeiros
+app.UseMiddleware<Catalogo_loja.Middleware.ExceptionMiddleware>();
 
 // 6. Ativa o Swagger se estiver em ambiente de desenvolvimento
 if (app.Environment.IsDevelopment())
