@@ -1,6 +1,8 @@
 ﻿using Catalogo_loja.Data; // Importa sua pasta Data
 using Catalogo_loja.Services;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation.AspNetCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +22,14 @@ builder.Services.AddCors(options =>
     });
 });
 
-// 3. Adiciona suporte aos Controllers
-builder.Services.AddControllers();
+// 3. Adiciona suporte aos Controllers e FluentValidation
+builder.Services.AddControllers()
+    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly()));
 
-// 4. Configura o Swagger (Documentação interativa)
+// 4. Configura o AutoMapper
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+// 5. Configura o Swagger (Documentação interativa)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -31,7 +37,7 @@ builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
 var app = builder.Build();
 
-// 5. Ativa o Swagger se estiver em ambiente de desenvolvimento
+// 6. Ativa o Swagger se estiver em ambiente de desenvolvimento
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
