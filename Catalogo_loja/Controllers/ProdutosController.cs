@@ -33,8 +33,8 @@ public class ProdutosController : ControllerBase
     {
         var (produtos, metadata) = await _service.GetAllAsync(nome, categoria, pageNumber, pageSize);
         
-        // Adiciona metadados de paginação no Header da resposta (Padrão REST maduro)
-        Response.Headers.Add("X-Pagination", System.Text.Json.JsonSerializer.Serialize(metadata));
+        // Inclui metadados de paginação no header seguindo padrões RESTful
+        Response.Headers.Append("X-Pagination", System.Text.Json.JsonSerializer.Serialize(metadata));
 
         return Ok(produtos);
     }

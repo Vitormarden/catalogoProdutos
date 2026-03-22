@@ -11,7 +11,6 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Configuração de precisão para valores monetários
         modelBuilder.Entity<Produto>()
             .Property(p => p.Preco)
             .HasPrecision(18, 2);

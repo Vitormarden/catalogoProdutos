@@ -1,4 +1,4 @@
-using Catalogo_loja.Data; // Importa sua pasta Data
+using Catalogo_loja.Data;
 using Catalogo_loja.Services;
 using Catalogo_loja.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -8,31 +8,32 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configura o Banco de Dados SQLite
+// Configuração do Banco de Dados SQLite
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(connectionString));
 
-// 2. Configura o CORS (para o React conseguir acessar a API)
+// Configuração de CORS para integração com o Frontend (Vite/React)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // Porta padrão do Vite/React
+        policy.WithOrigins("http://localhost:5173")
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .WithExposedHeaders("X-Pagination"); // Expõe metadados de paginação para o cliente
     });
 });
 
-// 3. Adiciona suporte aos Controllers e FluentValidation (Nova Sintaxe)
 builder.Services.AddControllers();
+
+// Ativa validação automática baseada no FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-// 4. Configura o AutoMapper
+// Configura o AutoMapper para escaneamento automático de Profiles
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-// 5. Configura o Swagger (Documentação interativa)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -41,15 +42,15 @@ builder.Services.AddSwaggerGen(c =>
     c.IncludeXmlComments(xmlPath);
 });
 
+// Registro de dependências (Dependency Injection)
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
 var app = builder.Build();
 
-// Middleware de Exceção Global deve ser um dos primeiros
+// Middleware de tratamento global de exceções
 app.UseMiddleware<Catalogo_loja.Middleware.ExceptionMiddleware>();
 
-// 6. Ativa o Swagger se estiver em ambiente de desenvolvimento
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -57,13 +58,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-// 6. Ativa o CORS
 app.UseCors("ReactPolicy");
-
 app.UseAuthorization();
-
-// 7. Mapeia os Controllers para as rotas
 app.MapControllers();
 
 app.Run();
