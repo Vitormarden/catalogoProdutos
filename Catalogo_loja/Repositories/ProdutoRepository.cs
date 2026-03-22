@@ -13,7 +13,7 @@ public class ProdutoRepository : IProdutoRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Produto>> GetAllAsync(string? nome, string? categoria)
+    public async Task<(IEnumerable<Produto> Items, PaginationMetadata Metadata)> GetAllAsync(string? nome, string? categoria, int pageNumber, int pageSize)
     {
         var query = _context.Produtos.AsNoTracking().AsQueryable();
 
@@ -23,7 +23,15 @@ public class ProdutoRepository : IProdutoRepository
         if (!string.IsNullOrWhiteSpace(categoria))
             query = query.Where(x => x.Categoria == categoria);
 
-        return await query.ToListAsync();
+        var totalCount = await query.CountAsync();
+        var metadata = new PaginationMetadata(totalCount, pageNumber, pageSize);
+
+        var items = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (items, metadata);
     }
 
     public async Task<Produto?> GetByIdAsync(Guid id)
