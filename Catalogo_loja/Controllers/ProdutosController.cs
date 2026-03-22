@@ -16,11 +16,19 @@ public class ProdutosController : ControllerBase
         _service = service;
     }
 
-    // 1. GET: api/produtos (Lista com filtros de Nome e Categoria)
+    // 1. GET: api/produtos (Lista com filtros de Nome, Categoria e Paginação)
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Produto>>> GetProdutos([FromQuery] string? nome, [FromQuery] string? categoria)
+    public async Task<ActionResult<IEnumerable<Produto>>> GetProdutos(
+        [FromQuery] string? nome, 
+        [FromQuery] string? categoria,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10)
     {
-        var produtos = await _service.GetAllAsync(nome, categoria);
+        var (produtos, metadata) = await _service.GetAllAsync(nome, categoria, pageNumber, pageSize);
+        
+        // Adiciona metadados de paginação no Header da resposta (Padrão REST maduro)
+        Response.Headers.Add("X-Pagination", System.Text.Json.JsonSerializer.Serialize(metadata));
+
         return Ok(produtos);
     }
 
