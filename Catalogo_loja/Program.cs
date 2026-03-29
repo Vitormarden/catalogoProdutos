@@ -1,3 +1,5 @@
+
+
 using Catalogo_loja.Data;
 using Catalogo_loja.Services;
 using Catalogo_loja.Repositories;
@@ -57,7 +59,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseCors("ReactPolicy");
 app.UseAuthorization();
 app.MapControllers();
