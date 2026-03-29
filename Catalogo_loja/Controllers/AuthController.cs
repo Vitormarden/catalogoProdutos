@@ -27,17 +27,22 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterDto model)
     {
         if (model.Password != model.ConfirmPassword)
-            return BadRequest(new AuthResponseDto { Success = false, Message = "Passwords do not match." });
+            return BadRequest(new AuthResponseDto { Success = false, Message = "As senhas não coincidem." });
+
+        var existingUser = await _userManager.FindByEmailAsync(model.Email);
+        if (existingUser != null)
+            return BadRequest(new AuthResponseDto { Success = false, Message = "Este e-mail já está em uso." });
 
         var user = new IdentityUser { UserName = model.Email, Email = model.Email };
         var result = await _userManager.CreateAsync(user, model.Password);
 
         if (result.Succeeded)
         {
-            return Ok(new AuthResponseDto { Success = true, Message = "User registered successfully!" });
+            return Ok(new AuthResponseDto { Success = true, Message = "Usuário registrado com sucesso!" });
         }
 
-        return BadRequest(new AuthResponseDto { Success = false, Message = string.Join(", ", result.Errors.Select(e => e.Description)) });
+        var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+        return BadRequest(new AuthResponseDto { Success = false, Message = $"Erro ao registrar: {errors}" });
     }
 
     [HttpPost("login")]
