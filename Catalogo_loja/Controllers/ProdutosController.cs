@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Catalogo_loja.Models;
 using Catalogo_loja.DTOs;
 using Catalogo_loja.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Catalogo_loja.Controllers;
 
@@ -69,6 +70,7 @@ public class ProdutosController : ControllerBase
     /// </summary>
     /// <param name="dto">Dados do novo produto.</param>
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult<Produto>> PostProduto(ProdutoDto dto)
     {
         var produtoCriado = await _service.CreateAsync(dto);
@@ -83,6 +85,7 @@ public class ProdutosController : ControllerBase
     /// <param name="id">O ID do produto a ser atualizado.</param>
     /// <param name="dto">Os novos dados do produto.</param>
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<IActionResult> PutProduto(Guid id, [FromBody] ProdutoDto dto)
     {
         var sucesso = await _service.UpdateAsync(id, dto);
@@ -98,6 +101,7 @@ public class ProdutosController : ControllerBase
     /// </summary>
     /// <param name="id">O ID do produto a ser removido.</param>
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> DeleteProduto(Guid id)
     {
         var sucesso = await _service.DeleteAsync(id);
