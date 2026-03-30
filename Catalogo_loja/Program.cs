@@ -138,6 +138,25 @@ builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
 var app = builder.Build();
 
+// Aplicar Migrations automaticamente em Produção
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        if (context.Database.IsSqlServer())
+        {
+            context.Database.Migrate();
+        }
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Um erro ocorreu ao aplicar as migrations.");
+    }
+}
+
 app.UseMiddleware<Catalogo_loja.Middleware.ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
