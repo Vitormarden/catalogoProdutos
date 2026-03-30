@@ -173,10 +173,12 @@ using (var scope = app.Services.CreateScope())
 
 app.UseMiddleware<Catalogo_loja.Middleware.ExceptionMiddleware>();
 
+app.UseSwagger();
+app.UseSwaggerUI();
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    // Outras configurações específicas de desenvolvimento se houver
 }
 
 app.UseCors("ReactPolicy");
