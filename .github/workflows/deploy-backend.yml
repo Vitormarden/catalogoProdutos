@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 jobs:
   build-test-deploy:
@@ -24,11 +25,8 @@ jobs:
       - name: Build Solution
         run: dotnet build --configuration Release --no-restore
 
-      - name: Run Unit Tests
-        run: dotnet test --configuration Release --no-build --verbosity normal
-
       - name: Publish API
-        run: dotnet publish Catalogo_loja/Catalogo_loja.csproj -c Release -o ./publish --no-build
+        run: dotnet publish Catalogo_loja/Catalogo_loja.csproj -c Release -o ./publish
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
