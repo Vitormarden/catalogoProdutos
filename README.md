@@ -1,5 +1,5 @@
 
-🛒 Catálogo de Produtos - Desafio Técnico Agilean
+🛒 Catálogo de Produtos 
 
   Este projeto é uma aplicação Full Stack de Catálogo de Produtos desenvolvida como parte
   do processo seletivo da Agilean. A solução contempla uma API RESTful robusta.
@@ -72,4 +72,5 @@
   1- dockerização da aplicação
   2- Logging
 
+  Link azure: https://mango-river-04f8a810f.6.azurestaticapps.net/
            
