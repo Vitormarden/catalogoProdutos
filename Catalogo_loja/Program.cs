@@ -1,5 +1,3 @@
-
-
 using Catalogo_loja.Data;
 using Catalogo_loja.Services;
 using Catalogo_loja.Repositories;
@@ -20,7 +18,14 @@ var builder = WebApplication.CreateBuilder(args);
 var vaultUri = builder.Configuration["AzureKeyVault:VaultUri"];
 if (!string.IsNullOrEmpty(vaultUri))
 {
-    builder.Configuration.AddAzureKeyVault(new Uri(vaultUri), new DefaultAzureCredential());
+    try 
+    {
+        builder.Configuration.AddAzureKeyVault(new Uri(vaultUri), new DefaultAzureCredential());
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Aviso: Não foi possível carregar o Key Vault. {ex.Message}");
+    }
 }
 
 // Configuração Dinâmica do Banco de Dados
@@ -78,12 +83,12 @@ builder.Services.AddCors(options =>
             var host = new Uri(origin).Host;
             return host == "localhost" || 
                    host.EndsWith("azurestaticapps.net") || 
-                   host.EndsWith("azurewebsites.net"); // Para suportar testes diretos no App Service se necessário
+                   host.EndsWith("azurewebsites.net");
         })
               .AllowAnyHeader()
               .AllowAnyMethod()
               .WithExposedHeaders("X-Pagination")
-              .AllowCredentials(); // Caso precise de cookies/autenticação integrada no futuro
+              .AllowCredentials();
     });
 });
 
@@ -97,7 +102,10 @@ builder.Services.AddSwaggerGen(c =>
 {
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.IncludeXmlComments(xmlPath);
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
 
     // Configuração do Swagger para JWT
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -139,7 +147,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("ReactPolicy");
-app.UseAuthentication(); // Adicionado para Identity/JWT
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
