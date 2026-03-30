@@ -30,8 +30,15 @@ if (!string.IsNullOrEmpty(vaultUri))
 }
 
 // Configuração Dinâmica do Banco de Dados
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=catalogo.db";
 var sqlServerConnectionString = builder.Configuration.GetConnectionString("AzureSqlConnectionString");
+
+// Ajuste para SQLite no Azure App Service (Linux)
+if (string.IsNullOrEmpty(sqlServerConnectionString) && !builder.Environment.IsDevelopment())
+{
+    // No Azure App Service Linux, o diretório /home é persistente entre restarts
+    connectionString = "Data Source=/home/catalogo.db";
+}
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -146,12 +153,21 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<AppDbContext>();
+        
+        // No SQLite, EnsureCreated() ajuda a garantir que o arquivo físico seja criado se não existir
+        if (context.Database.IsSqlite())
+        {
+             context.Database.EnsureCreated();
+        }
+        
         context.Database.Migrate();
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Um erro ocorreu ao aplicar as migrations.");
+        logger.LogCritical(ex, "ERRO CRÍTICO ao aplicar as migrations.");
+        // Não relançar aqui para permitir que a aplicação tente subir, 
+        // mas logar como crítico para aparecer nos logs do Azure.
     }
 }
 
