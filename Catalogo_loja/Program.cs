@@ -146,10 +146,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<AppDbContext>();
-        if (context.Database.IsSqlServer())
-        {
-            context.Database.Migrate();
-        }
+        context.Database.Migrate();
     }
     catch (Exception ex)
     {
