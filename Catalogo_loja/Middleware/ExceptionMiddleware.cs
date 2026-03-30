@@ -29,13 +29,10 @@ public class ExceptionMiddleware
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
             object response;
-            if (_env.IsDevelopment())
+            // Temporariamente habilitado para debug no Azure
+            if (true) // Substituir _env.IsDevelopment() para ver o erro no Azure
             {
                 response = new { status = context.Response.StatusCode, mensagem = ex.Message, stackTrace = ex.StackTrace?.ToString() };
-            }
-            else
-            {
-                response = new { status = context.Response.StatusCode, mensagem = "Ocorreu um erro interno no servidor." };
             }
 
             var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
