@@ -73,10 +73,17 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://*.azurestaticapps.net")
+        policy.SetIsOriginAllowed(origin =>
+        {
+            var host = new Uri(origin).Host;
+            return host == "localhost" || 
+                   host.EndsWith("azurestaticapps.net") || 
+                   host.EndsWith("azurewebsites.net"); // Para suportar testes diretos no App Service se necessário
+        })
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .WithExposedHeaders("X-Pagination");
+              .WithExposedHeaders("X-Pagination")
+              .AllowCredentials(); // Caso precise de cookies/autenticação integrada no futuro
     });
 });
 
