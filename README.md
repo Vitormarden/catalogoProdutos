@@ -1,8 +1,7 @@
 
 🛒 Catálogo de Produtos 
 
-  Este projeto é uma aplicação Full Stack de Catálogo de Produtos desenvolvida como parte
-  do processo seletivo da Agilean. A solução contempla uma API RESTful robusta.
+  Este projeto é uma aplicação Full Stack de Catálogo de Produtos. Solução contempla uma API RESTful robusta.
 
   🚀 Tecnologias Utilizadas
 
