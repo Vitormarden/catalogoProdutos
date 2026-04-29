@@ -72,5 +72,5 @@
   2- Logging
 
   Link azure: https://mango-river-04f8a810f.6.azurestaticapps.net/
-  Branch estavel é o projeto cru
+ 
            
